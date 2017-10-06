@@ -1,6 +1,8 @@
 
 package edu.upc.eseiaat.pma.multiquiz;
 
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +12,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
 
 public class QuizActivity extends AppCompatActivity {
 
@@ -36,13 +39,7 @@ public class QuizActivity extends AppCompatActivity {
         btn_prev = (Button) findViewById(R.id.btn_prev);
 
         all_questions = getResources().getStringArray(R.array.all_questions);
-        answer_is_correct = new boolean[all_questions.length];
-        answer = new int[all_questions.length];
-        for (int i = 0; i < answer.length; i++) {
-            answer[i] = -1;
-        }
-        current_question = 0;
-        showQuestion();
+        startOver();
 
         btn_next.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,22 +49,8 @@ public class QuizActivity extends AppCompatActivity {
                     current_question++;
                     showQuestion();
                 } else {
-                    int correctas = 0, incorrectas = 0;
-                    for (boolean b : answer_is_correct) {
-                        if (b) correctas++;
-                        else incorrectas++;
-                    }
-                    String resultado =
-                            String.format("Correctas: %d -- Incorrectas: %d", correctas, incorrectas);
-
-                    Toast.makeText(QuizActivity.this, resultado, Toast.LENGTH_LONG).show();
-                    finish();
+                    checkResults();
                 }
-                /*
-                for (int i = 0; i < answer_is_correct.length; i++) {
-                    Log.i("alhucar", String.format("Respuesta %d: %d (%b)", i, answer[i], answer_is_correct[i]));
-                }
-                */
             }
         });
 
@@ -81,6 +64,48 @@ public class QuizActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void startOver() {
+        answer_is_correct = new boolean[all_questions.length];
+        answer = new int[all_questions.length];
+        for (int i = 0; i < answer.length; i++) {
+            answer[i] = -1;
+        }
+        current_question = 0;
+        showQuestion();
+    }
+
+    private void checkResults() {
+        int correctas = 0, incorrectas = 0, nocontestadas = 0;
+        for (int i = 0;  i < all_questions.length; i ++) {
+            if (answer_is_correct[i]) correctas++;
+            else if (answer[i] == -1) nocontestadas++;
+            else incorrectas++;
+        }
+        String message =
+                String.format("Correctas: %d/ Incorrectas: %d/ No contestadas: %d/ ",
+                        correctas, incorrectas, nocontestadas);
+
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.results);
+        builder.setMessage(message);
+        builder.setCancelable(false);
+        builder.setPositiveButton(R.string.finish, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        builder.setNegativeButton(R.string.start_over, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                startOver();
+            }
+        });
+        builder.create().show();
     }
 
     private void checkAnswer() {
