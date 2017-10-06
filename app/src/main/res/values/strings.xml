@@ -13,7 +13,8 @@
 
     <array name="all_questions">
         <item>What is the capital of Bhutan?;Ouagadougou;Phnom Penh;*Thimphu;Yuhusa</item>
-        <item>Pregunta 2;a;*b;c;d</item>
+        <item>What is the capital of Spain?;Barcelona;*Madrid;Sevilla;Valencia</item>
+        <item>What is the capital of France?;Lyon;Marselle;Fionye;*Paris</item>
     </array>
 
 </resources>
